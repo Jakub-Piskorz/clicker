@@ -1,0 +1,324 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=0.65">
+  <meta name="viewport" content="width=device-width, initial-scale=0.65">
+  <meta name="description" content="Welcome to Delta Clicker, a little game where you start a small Asteroid Miner Company from scratch and help it grow. Good luck!">
+  <title>Delta Clicker (in development)</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.3/umd/popper.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/js/bootstrap.min.js"></script>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css">
+  
+  <style>
+     body {
+      font-family: myFirstFont;
+	  width: 100%; height: 100%;
+    }
+	
+	@font-face {
+      font-family: myFirstFont;
+      src: url(/fonts/Prototype.ttf);
+	}
+	
+    #wrapper {
+    	
+    	padding: 15px;
+    	display: block;
+			height: auto;
+      width: auto;
+      max-width: 100%;
+      max-height: 100%;
+      position: relative;
+			}
+    
+    #background {
+    	position: absolute;
+      display: inline-block;
+      width: 100%;
+	  height: 100%;
+      z-index: 1;
+      background-color: #000000;
+    }
+    
+    #gra {
+    	position: absolute;
+      width: 100%;
+      display: inline-block;
+      z-index: 2;
+      text-align: center;
+      
+    }
+    
+    #score {
+    	position: absolute;
+    	top: 200px;
+    	display: inline-block;
+			border-radius: 5px;
+    	padding: 15px 25px;
+      background-color: #333333;
+      color: orange;
+      font-size: 30px;
+      margin: 0 auto;
+    }
+    #income{
+    	position: absolute;
+    	display: inline-block;
+		background-color: rgba(60, 60, 60, 0.7);
+		padding: 25px;
+		border-radius: 10px;
+      z-index: 2;
+      color: white;
+      font-size: 20px;
+      top: 0;
+      left: 0;
+    }
+    #przycisk{
+    	position: absolute;
+      display: inline-block;
+      top: 290px;
+    }
+    cursor {
+    	
+    }
+    .buy{
+    	all: unset;
+    	background-color: #FF8F25;
+      padding: 9px 11px;
+	  border-radius: 4px;
+      font-size: 15px;
+      margin: 15px 5px 30px;
+    }
+
+    
+    #logo {
+    	position: absolute;
+      float: left;
+      width: 30%;
+      height: auto;
+      right: 0;
+    }
+	
+	.modal-content {
+	background-color: rgba(60, 60, 60, 0.7);
+	color: white;
+	}
+	
+	.close {
+	color: white;
+	}
+
+    body {
+    	overflow: hidden;
+      font-family: myFirstFont, Helvetica, sans-serif;
+    }
+	
+	@media only screen and (max-width: 768px)
+	{
+	.rwd_wrapper {
+		width: 100%;
+		display: inline-block;
+		float: top;
+	}
+	}
+    
+  </style>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.3.1/jquery.js"></script>
+  
+</head>
+<body>
+  <div class="container">
+ 
+
+  <!-- The Modal -->
+  <div class="modal" id="myModal">
+    <div class="modal-dialog">
+      <div class="modal-content">
+      
+        <!-- Modal Header -->
+        <div class="modal-header">
+          <h4 class="modal-title"><span id="notEnoughMoney">Not enough Deltium</span></h4>
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+        </div>
+        
+        
+      </div>
+    </div>
+  </div>
+  
+</div>
+  
+  
+  
+<div id="background" style="background-image: url('/img/sky.png'); background-size: 700px;">
+  
+  <div id="wrapper">
+    <img id="logo" src="/img/logo.png" />
+  
+  <!-- Zawartość HTML gry -->
+  <div id="gra">
+  <div class="rwd_wrapper">
+    <div id="income">
+      <span id="cursor" >0</span> Drills <div> Drill cost: <span id="cursorPrice">0 </span> Deltium</div>
+      <button id="buyCursor1" class="buy">Buy a drill</button>
+      <br />
+    
+	  <span id="babcia">0</span> Miners <div> Miner cost: <span id="babciaPrice">0 </span> Deltium</div>
+      <button id="buyBabcia" class="buy">Hire the Miner</button>
+	  <br />
+	  
+	  <span id="drone">0</span> Drones <div> Mining drone cost: <span id="dronePrice">0 </span> Deltium</div>
+      <button id="buyDrone" class="buy">Buy a mining drone</button>
+  </div>
+  </div>
+    <div class="rwd_wrapper">
+    <div id="score">
+      0
+    </div>
+	
+    <button id="przycisk">
+      Mine Deltium
+    </button>
+	</div>
+    
+    
+    <!-- Koniec zawartości HTML gry -->
+  </div>
+    
+  </div>
+  
+  
+  
+<script>
+  /* Gdy strona się załaduje */
+  $(document).ready(function(){
+    /* Zegar */
+    setInterval(function() {
+    	$("#score").text(clicker.score);
+      $("#cursor").text(clicker.cursor);
+      $("#cursorPrice").text(clicker.cursorPrice);
+      $("#babcia").text(clicker.babcia);
+      $("#babciaPrice").text(clicker.babciaPrice);
+      $("#drone").text(clicker.drone);
+      $("#dronePrice").text(clicker.dronePrice);
+      }, 10);
+    
+    /* Zegar 400 */
+    setInterval(function() {
+      clicker.babciaIncome();
+    }, 400);
+	
+	    /* Zegar 80 */
+    setInterval(function() {
+      clicker.droneIncome();
+    }, 60);
+	
+    
+    /* Główne funkcje*/
+  	clicker.onPointClick();
+    clicker.cursorUpgrade();
+    clicker.babciaUpgrade();
+	clicker.droneUpgrade();
+    document.cookie = "username=John Doe; expires=Thu, 18 Dec 2013 12:00:00 UTC; path=/";
+  });
+  
+  /* Obiekt Clicker (Zawartość gry) */
+  var clicker = {
+    
+    /* --- Zmienne --- */
+    
+  	score : 0,
+    income : 0,
+    cursor: 1,
+    cursorPrice: 15,
+    babcia: 0,
+    babciaPrice: 100,
+    babciaIncome: 0,
+	drone: 0,
+	dronePrice: 800,
+	droneIncome: 0,
+    
+    /* --- Funkcje --- */
+    
+    /* Funkcja gdy klikasz na przycisk */
+    onPointClick : function() {
+  		$("#przycisk").click(function(){
+        clicker.score += clicker.cursor;
+      });
+    },
+    
+    /* Ulepszenie kursora */
+    cursorUpgrade : function(){
+      $("#buyCursor1").click(function(){
+        if(clicker.score >= clicker.cursorPrice){
+	      clicker.score -= clicker.cursorPrice;
+          clicker.cursorPrice += 5;
+          clicker.cursor += 1;
+        } else {
+        	clicker.notEnoughMoney();
+        }
+      });
+    },
+    
+    /* Ulepszenie babci */
+    babciaUpgrade : function(){
+      $("#buyBabcia").click(function() {
+      
+      if(clicker.score>=clicker.babciaPrice){
+		clicker.score -= clicker.babciaPrice;
+      	clicker.babcia += 1;
+        clicker.babciaPrice += 6*clicker.babcia;
+      } else {
+        	clicker.notEnoughMoney();
+        }
+      });
+    },
+	
+	    /* Funkcja zwiększająca score od babci */
+    babciaIncome : function() {
+      var babciaIncrease = clicker.babcia;
+    	clicker.score += babciaIncrease;
+    },
+	
+	   /* Ulepszenie drona */
+    droneUpgrade : function(){
+      $("#buyDrone").click(function() {
+      
+      if(clicker.score>=clicker.dronePrice){
+	    clicker.score -= clicker.dronePrice;
+      	clicker.drone += 1;
+        clicker.dronePrice += 15*clicker.drone;
+      } else {
+        	clicker.notEnoughMoney();
+        }
+      });
+    },
+	
+		    /* Funkcja zwiększająca score od drona */
+    droneIncome : function() {
+      var droneIncrease = clicker.drone;
+    	clicker.score += droneIncrease;
+    },
+    
+
+    
+    /* Alert  */
+    notEnoughMoney : function(){
+    	$("#myModal").css("display", "block");
+      $(".close").click(function(){
+      	$("#myModal").css("display", "none");
+      });
+    }
+    
+  };
+</script>
+  
+  
+  
+  
+  
+  
+  
+  
+</body>
+</html>
